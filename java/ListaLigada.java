@@ -1,148 +1,217 @@
+import javax.lang.model.type.NullType;
+
 public class ListaLigada implements EstruturaDeDados{
-    private No inicio;
-
-    public void removeInicio (){
-        if (inicio != null)
-            inicio = inicio.getProximo();
+    
+    private No<T> noComeco ;
+    private No<T> noAtual ;
+    private int tamanho ;
+    private T maximo;
+    private T minimo;
+  
+    public ListaEnca() {
+      
+      this.noComeco = null;
+      this.tamanho = 0;
+      this.noAtual = null;
     }
-
-    public void removeFim (){
-        if (inicio == null){
-            return;
-        }
-        if (inicio.getProximo() == null){
-            inicio = null;
-        }
-        removeFim(inicio);
+  
+  
+    
+  
+    public boolean insert (T chave){
+      try {
+        No novoNo = new No(chave);
+      if(this.isEmpty()){
+        this.noComeco = novoNo;
+        this.tamanho = this.tamanho+1;
+        this.noAtual = noComeco;
+        this.maximo=  noComeco.getObjetct();
+        this.minimo = noComeco.getObjetct();
+        return true;
+      }
+      No<T> noAgora = noAtual;
+      No<T> noAuxiliarAnterior = noAgora;
+      noAgora.setProximoNo(novoNo);
+      noAgora = novoNo;
+      noAgora.setNoAnterior(noAuxiliarAnterior);
+      this.noAtual = noAgora;
+      this.tamanho = this.tamanho +1;
+  
+  try {
+    Integer key = (Integer)chave;
+    Integer max = (Integer) maximo;
+    Integer mim = (Integer) minimo;
+    if(key> max){
+      this.maximo = (T)key;
     }
-
-    public void removeFim (No n){
-        No proximo = n.getProximo();
-        if (proximo.getProximo() == null){
-            n.setProximo(null);
-            return;
-        } else{
-            removeFim(proximo);
-        }
+    if (key < mim){
+      this.minimo = (T)key;
     }
-
-    public void insereInicio (int valor){
-        if(inicio == null){
-            inicio = new No(valor);
-            return;
-        }
-        No n = new No(valor);
-        n.setProximo(inicio);
-        inicio = n;
-
+  
+  
+    
+  } catch (Exception e) {
+    return true;
+  }
+       
+      
+      return true;
+  
+      } catch (Exception e) {
+        return false;
+      }
+    
+  
     }
-
-    public void insereFim (int valor){
-        if(inicio == null){
-            inicio = new No(valor);
-            return;
+   private boolean verificaTipo(String tipo){
+    boolean verifica =this.getClass().getTypeName().equals(tipo);
+    return verifica;
+  }
+    
+   public T maximum(){
+    return this.maximo; 
+   }
+  
+   public T minimum(){
+    return this.minimo;
+   }
+    public boolean delete(T chave){
+      if(!this.isEmpty()){
+        if(chave.equals(this.noComeco.getObjetct())){
+          No<T> segundoNo = this.noComeco.getProximoNo();
+          this.noComeco = segundoNo;
+          this.tamanho = this.tamanho -1;
+          return true;
         }
-        insere(inicio, valor);
-    }
-
-    public boolean procura (int valor){
-        if (inicio == null){
-            return false;
-        } else {
-            return procura(inicio, valor);
+        No<T> noParaDeletar = this.find(chave);
+        if(noParaDeletar != null){
+          
+          if (noParaDeletar.getProximoNo() !=null){
+            No<T> anterior = noParaDeletar.getNoAnterior();
+            No<T> proximo = noParaDeletar.getProximoNo();
+            anterior.setProximoNo(proximo);
+            proximo.setNoAnterior(anterior);
+            this.tamanho = this.tamanho -1;
+          }
+          else{
+            No<T> anterior = noParaDeletar.getNoAnterior();
+            anterior.setProximoNo(null);
+            noParaDeletar.setNoAnterior(null);
+  
+          }
+          
+  
+        return true;
+  
         }
+        
+      }
+     return false;
     }
-
-    public boolean procura (No n, int valor){
-        if (n.getValor() == valor){
+  public T sucessor(T chave){
+    try {
+      if(!isEmpty()){
+        No<T> noChave = this.find(chave);
+        if(noChave.getProximoNo()!=null){
+          No<T> proximoNo = noChave.getProximoNo();
+          return (T) proximoNo.getObjetct();
+        }
+        return null;
+        
+      }
+    
+      return null;
+      
+    } catch (Exception e) {
+      return null;
+    }
+  
+  }
+  public T predecessor(T chave){
+    try {
+      if(!isEmpty()){
+        No<T> noChave = this.find(chave);
+        if(noChave.getNoAnterior()!=null){
+          No<T> anterior = noChave.getNoAnterior();
+          return (T) anterior.getObjetct();
+        }
+        return null;
+      }
+    }
+    catch (Exception e) {
+      return null;
+    }
+    return null;
+  
+  }
+    public No<T> find(T chave){
+      if(chave.equals(this.noComeco.getObjetct())){
+   
+        return noComeco;
+      }
+      No<T> referencia = this.noComeco;
+      No<T> referenciaProximo = referencia.getProximoNo();
+      if (!this.isEmpty()){
+        for(int i = 0 ; i< this.tamanho -1; i++){
+          if(referenciaProximo.getObjetct().equals(chave)){
+            if(referencia.getProximoNo() == null){
+              return referencia;
+            }
+            return referencia.getProximoNo();
+          }
+          if(referenciaProximo.getObjetct() == (null)){
+            return null;
+          }
+          referencia = referenciaProximo;
+          referenciaProximo = referencia.getProximoNo();
+          
+        }
+  
+      }
+      return referencia;
+    }
+    public boolean search (T chave){
+      
+      if(!this.isEmpty()){
+        if(chave.equals(this.noComeco.getObjetct())){
+        
+          return true;
+        }
+        No<T> referencia = this.noComeco;
+        No<T> referenciaProximo = referencia.getProximoNo();
+        for(int i = 0 ; i< this.tamanho-1; i++){
+          if(referenciaProximo.getObjetct().equals(chave)){
+            
             return true;
-        } else if (n.getProximo() == null){
+          }
+          if(referenciaProximo.getObjetct() == (null)){
             return false;
-        } else {
-            return procura(n.getProximo(), valor);
+          }
+          referencia = referenciaProximo;
+          referenciaProximo = referencia.getProximoNo();
+          
         }
+      } 
+      return false;
     }
-    public void insere (No n, int valor){
-        if (n.getProximo() == null){
-            No novo = new No(valor);
-            n.setProximo(novo);
-        } else {
-            insere(n.getProximo(), valor);
-        }
-    }
-
-    public void remover(int valor){
-        if (inicio == null){
-            return;
-        }
-        if (inicio.getValor() == valor){
-            inicio = inicio.getProximo();
-            return;
-        }
-        remover(inicio, valor);
-    }
-
-    public void remover(No n, int valor){
-        No proximo = n.getProximo();
-        if (proximo == null){
-            return;
-        }
-        if (proximo.getValor() == valor){
-            n.setProximo(proximo.getProximo());
-        } else{
-            remover(proximo, valor);
-        }
-    }
-
-    public static void main(String[] args) {
-        for (int i = 0; i < 100; i++) {
-            System.out.println(i);
-            if (i == 50){
-                break;
+  
+    @Override
+    public String toString() {
+        String strRetorno = "";
+        No<T> noAuxiliar = noComeco;
+        for(int i = 0; i < this.tamanho; i++){
+            strRetorno += "[No{conteudo=" + noAuxiliar.getObjetct() +"}]--->";
+            noAuxiliar = noAuxiliar.getProximoNo();
+            if (noAuxiliar == null){
+              break;
             }
         }
-        System.out.println("fim");
+        strRetorno += "null";
+        return strRetorno;
     }
-
-    @Override
-    public boolean insert(int chave) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean delete(int chave) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public boolean search(int chave) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public int minimum() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int maximum() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int sucessor(int chave) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public int prodessor(int chave) {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-}
+  
+    public boolean isEmpty(){
+      return this.noComeco == null ? true : false;
+  }
+  }
+  
