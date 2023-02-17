@@ -1,11 +1,11 @@
 
 
-public interface EstruturaDeDados {
-    public boolean insert(int chave);
-    public boolean delete(int chave);
-    public boolean search(int chave);
+public interface EstruturaDeDados<T> {
+    public boolean insert(T chave);
+    public boolean delete(T chave);
+    public boolean search(T chave);
     public T minimum();
     public T maximum();
-    public T sucessor(int chave);
-    public T prodessor(int chave);
+    public T sucessor(T chave);
+    public T prodessor(T chave);
 }
